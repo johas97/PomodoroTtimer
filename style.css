@@ -51,6 +51,12 @@ body {
     display: flex;
 }
 
+.victoryText {
+    color : var(--tomtatoGreen);
+
+
+}
+
 
 
 
