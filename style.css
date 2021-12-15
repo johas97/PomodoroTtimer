@@ -48,7 +48,13 @@ body {
 }
 
 .victoryPic {
-    
+    display: flex;
+}
+
+.victoryText {
+    color : var(--tomtatoGreen);
+
+
 }
 
 
