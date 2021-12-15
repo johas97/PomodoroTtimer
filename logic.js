@@ -1,5 +1,7 @@
 const minRef = document.querySelector(".minDisplay");
 const sekRef = document.querySelector(".sekDisplay");
+
+
 minVal = 45;
 sekVal = 0;
 
@@ -9,6 +11,10 @@ sekVal = 0;
 const startBtn = document.querySelector(".startButton");
 
 startBtn.addEventListener("click", () => {
+    if (sekVal === 0 && minVal === 0) {
+        minVal = 45;
+
+    } 
     countDown = startCountdown();
 });
 const pauseBtn = document.querySelector(".pauseButton");
@@ -36,6 +42,7 @@ resetBtn.addEventListener("click", () => {
 
 function startCountdown () {
     const countDown = setInterval (() => {
+       
         if(sekVal === 0) {
             sekVal = 59;
             minVal -= 1;
@@ -55,9 +62,15 @@ function startCountdown () {
         minRef.textContent = minVal;
         if (sekVal === 0 && minVal === 0) {
             clearInterval(countDown);
+            const sessionWin = document.querySelector(".victoryPic");
+           const div = document.createElement('div');
+            div.innerHTML = "<img src='yellow.png' alt=''>";
+            sessionWin.appendChild(div);
+            let audio = new Audio('New Bollywood Instrumental.mp3');
+            audio.play();
         }
     
-    }, 100);
+    }, 1000);
 
     return countDown;
 
