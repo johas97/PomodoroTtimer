@@ -4,6 +4,7 @@ const sekRef = document.querySelector(".sekDisplay");
 
 minVal = 45;
 sekVal = 0;
+let timeCounting = false;
 
 
 // Button functions 
@@ -15,12 +16,17 @@ startBtn.addEventListener("click", () => {
         minVal = 45;
 
     } 
-    countDown = startCountdown();
+    if (!timeCounting) {
+        countDown = startCountdown();
+        timeCounting = true;
+
+    }
 });
 const pauseBtn = document.querySelector(".pauseButton");
 
 pauseBtn.addEventListener("click", () => {
     clearInterval(countDown);
+    timeCounting = false;
 
 });
 const resetBtn = document.querySelector(".resetButton");
@@ -32,6 +38,7 @@ resetBtn.addEventListener("click", () => {
     sekVal = 0;
     minRef.textContent = minVal;
     sekRef.textContent = "0" + sekVal;
+    timeCounting = false;
 });
 
 
