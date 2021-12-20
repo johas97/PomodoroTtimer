@@ -143,11 +143,11 @@ body {
         }
   
         .s2 {
-            transform: translate(-20px, 80px) rotate(30deg);
+            transform: translate(-22px, 85px) rotate(30deg);
         }
 
         .s3 {
-            transform: translate(-30px, 92px) rotate(35deg);
+            transform: translate(-34px, 105px) rotate(35deg);
         }
   
         /* An inline-block element is placed as an inline
