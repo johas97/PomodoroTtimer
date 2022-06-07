@@ -74,6 +74,7 @@ function startCountdown () {
             div.innerHTML = "<img src='yellow.png' alt=''>";
             sessionWin.appendChild(div);
             let audio = new Audio('New Bollywood Instrumental.mp3');
+            audio.volume = 0.3;
             audio.play();
         }
     
