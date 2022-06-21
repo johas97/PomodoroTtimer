@@ -3,13 +3,14 @@
 
 
 //Time Keeper object 
-function TimeKeeper (startDate, currentDate, diffInSeconds, minuteTimer, secondsTimer, timeCounting) {
+function TimeKeeper (startDate, currentDate, minuteTimer, secondsTimer, timeCounting, diffInSeconds, wasPaused) {
     this.startDate = startDate;
     this.currentDate = currentDate;
-    this.diffInSeconds = diffInSeconds; 
     this. minuteTimer = minuteTimer;
     this.secondsTimer = secondsTimer;
     this.timeCounting = timeCounting;
+    this.diffInSeconds = diffInSeconds;
+    this.wasPaused = wasPaused;
 }
 
 TimeKeeper.prototype.getStartDate = function() {
@@ -18,9 +19,7 @@ TimeKeeper.prototype.getStartDate = function() {
 TimeKeeper.prototype.getCurrentDate = function() {
     return this.currentDate;
 }
-TimeKeeper.prototype.getDiffInSeconds = function() {
-    return this.diffInSeconds;
-}
+
 TimeKeeper.prototype.getMinuteTimer = function() {
     return this.minuteTimer;
 }
@@ -30,6 +29,16 @@ TimeKeeper.prototype.getSecondsTimer = function() {
 TimeKeeper.prototype.getTimeCounting = function() {
     return this.timeCounting;
 }
+TimeKeeper.prototype.getDiffInSeconds = function() {
+    return this.diffInSeconds;
+}
+TimeKeeper.prototype.getWasPaused = function() {
+    return this.wasPaused;
+}
+TimeKeeper.prototype.calculateDiffInSeconds = function() {
+    return Math.round(((+this.currentDate) - (+this.startDate)) / 1000); 
+      
+}
 
 
 TimeKeeper.prototype.setStartDate = function(newVal) {
@@ -37,9 +46,6 @@ TimeKeeper.prototype.setStartDate = function(newVal) {
 }
 TimeKeeper.prototype.setCurrentDate = function(newVal) {
     this.currentDate = newVal;
-}
-TimeKeeper.prototype.setDiffInSeconds = function(newVal) {
-    this.diffInSeconds = newVal;
 }
 TimeKeeper.prototype.setMinuteTimer = function(newVal) {
     this.minuteTimer = newVal;
@@ -50,8 +56,15 @@ TimeKeeper.prototype.setSecondsTimer = function(newVal) {
 TimeKeeper.prototype.setTimeCounting = function(newVal) {
     this.timeCounting = newVal;
 }
+TimeKeeper.prototype.setDiffInSeconds = function(newVal) {
+    this.diffInSeconds = newVal;
+    console.log(this.diffInSeconds);
+}
+TimeKeeper.prototype.setWasPaused = function(newVal) {
+    this.wasPaused = newVal;
+}
 
-const timeKeeperObj = new TimeKeeper(null, null, null, 45, 0 , false);
+const timeKeeperObj = new TimeKeeper(null, null, 45, 0 , false, false, false);
 
 // Selectors object
 const selectors = {
@@ -74,7 +87,7 @@ const selectors = {
         return this.pauseBtn;
     },
     getResetBtn: function() {
-        return this.getResetBtnM;
+        return this.resetBtn;
     }
 }
 
@@ -94,19 +107,23 @@ selectors.getStartBtn().addEventListener("click", () => {
 selectors.getPauseBtn().addEventListener("click", () => {
     clearInterval(countDown);
     timeKeeperObj.setTimeCounting(false);
-    timeKeeperObj.setSecondsTimer((45*60) - ((minRef.textContent * 60) + parseInt(sekRef.textContent))); 
-  //  ijrdofpghujpot jdfsglio ju // Texten ovan måte bli tillgänglig i "räkne-funktionen"
+    timeKeeperObj.setDiffInSeconds(timeKeeperObj.calculateDiffInSeconds()); 
+     ///Fel häär, behövs funktion "saveSecondsFromPause"
+    timeKeeperObj.setWasPaused(true);
+   // timeKeeperObj.setSecondsTimer((45*60) - ((selectors.getMinRef().textContent * 60) +
+   //  parseInt(selectors.getSekRef().textContent))); 
+
 });
 
 
 selectors.getResetBtn().addEventListener("click", () => {
     
     clearInterval(countDown);
-    minuteTimer = 45;
-    secondsTimer = 0;
-    minRef.textContent = minuteTimer;
-    sekRef.textContent = "0" + secondsTimer;
-    timeCounting = false;
+    timeKeeperObj.setMinuteTimer(45);
+    timeKeeperObj.setSecondsTimer(0);
+    selectors.getMinRef().textContent = timeKeeperObj.getMinuteTimer();
+    selectors.getSekRef().textContent = "0" + timeKeeperObj.getSecondsTimer();
+    timeKeeperObj.setTimeCounting(false);
 });
 
 
@@ -114,45 +131,41 @@ selectors.getResetBtn().addEventListener("click", () => {
 // Countdown function
 
 function startCountdown () {
-    
-    let startTime = new Date();
-    let startFromPause;
+    // DU vill ju ändra startdatum och ej "current datum" !!!!!
+    timeKeeperObj.setStartDate(new Date());
     let passedTimeSeconds;
 
-    if (minuteTimer == 45 && secondsTimer == 00) {
-        startFromPause = false;
-    }
-    else {
-        startFromPause = true; 
-    }
-
     const countDown = setInterval (() => {
-       let currentTime = new Date();
-       
-
-       if (!startFromPause) {
-           passedTimeSeconds = Math.round(((+currentTime) - (+startTime) )/1000);
-           
+      
+        currentDate = new Date();
+       /// Denna ska bort typ 
+       if (timeKeeperObj.getWasPaused()){
+        
+        currentDate.setSeconds(timeKeeperObj.getDiffInSeconds());
+        console.log(currentDate);
+        timeKeeperObj.setCurrentDate(currentDate);
+        timeKeeperObj.setWasPaused(false);
        }
-       else { 
-           startFromPause = false;
-       }
+       else{
+        timeKeeperObj.setCurrentDate(currentDate);
+        }
        
-     
+        passedTimeSeconds = timeKeeperObj.calculateDiffInSeconds();
+      
 
         //Passed time in sek to min
-        minuteTimer = 44 - Math.floor(passedTimeSeconds/60);
-        secondsTimer = 60 - (passedTimeSeconds % 60); 
-
-        if (secondsTimer < 10) {
-            sekRef.textContent = "0" + secondsTimer;
+        timeKeeperObj.setMinuteTimer(44 - Math.floor(passedTimeSeconds/60));
+        timeKeeperObj.setSecondsTimer(60 - (passedTimeSeconds % 60));
+   
+        if (timeKeeperObj.getSecondsTimer() < 10) {
+            selectors.getSekRef().textContent = "0" + timeKeeperObj.getSecondsTimer();
         }
         else {
-            sekRef.textContent = secondsTimer;
+            selectors.getSekRef().textContent = timeKeeperObj.getSecondsTimer();
         }
-        minRef.textContent = minuteTimer;
+        selectors.getMinRef().textContent = timeKeeperObj.getMinuteTimer();
 
-        if (secondsTimer === 0 && minuteTimer === 0) {
+        if (timeKeeperObj.getSecondsTimer() === 0 && timeKeeperObj.getMinuteTimer() === 0) {
             clearInterval(countDown);
             
             const timerPicSelector = document.querySelector(".victoryPic");
